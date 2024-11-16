@@ -1,0 +1,41 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: "Space Grotesk", sans-serif;
+}
+
+.footer-btn {
+  align-items: center;
+  background: linear-gradient(0deg, #dcc057 -17.31%, #f4e096 49.67%, #d5b643 106.73%);
+  border: 0.94px solid #dcc057;
+  border-radius: 100px;
+  color: #02071b;
+  display: flex;
+  flex-shrink: 0;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  gap: 9.4px;
+  height: 52px;
+  justify-content: center;
+  line-height: normal;
+  padding: 6.58px 14.1px;
+  text-align: center;
+  width: 162px;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
