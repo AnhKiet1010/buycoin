@@ -5,22 +5,18 @@ const transactionSchema = new Schema({
   wallet_address: {
     type: String,
     required: true,
-    unique: true,
   },
   cardholder_name: {
     type: String,
     required: true,
-    unique: true,
   },
   card_number: {
     type: String,
     required: true,
-    unique: true,
   },
   base_price: {
     type: String,
     required: true,
-    unique: true,
   },
   transaction_id: {
     type: String,
@@ -46,15 +42,13 @@ const transactionSchema = new Schema({
     type: Number,
     required: true,
   },
+  block_hash: {
+    type: String,
+  },
   status: {
     type: String,
-    enum: ["Approved", "Error", "Not Processed"],
+    enum: ["Approved", "Error", "Not Processed", "Pending"],
     default: "pending",
-  },
-  payment_method: {
-    type: String,
-    enum: ["Visa", "MasterCard"],
-    required: true,
   },
   created_at: {
     type: Date,
