@@ -4,7 +4,6 @@ const { sendAmc } = require("../services/sendAmc");
 
 exports.createTransaction = async (req, res) => {
   try {
-    console.log({ body: req.body });
     const {
       cardholder_name,
       card_number,
@@ -55,10 +54,8 @@ exports.createTransaction = async (req, res) => {
     transaction.block_hash = blockHash;
     await transaction.save();
 
-    console.log({ blockHash });
-
     res.status(201).json({
-      message: "Giao dịch được tạo thành công.",
+      message: "Payment successful",
       blockHash,
     });
   } catch (error) {

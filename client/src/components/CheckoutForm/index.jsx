@@ -18,18 +18,19 @@ const CheckoutForm = () => {
     handleSubmit,
     control,
     formState: { errors },
+    reset,
     setValue,
   } = useForm({
     defaultValues: {
       coin_symbol: "HEWE",
-      coin_amount: 10,
-      usd_amount: 0,
-      wallet_address: "0x7AB38a5eEc793f8CdC770f365d573678005ad07B",
-      cardholder_name: "John Williams",
-      card_number: "5146312620000045",
-      card_expiration: "09/25",
-      card_type: "mastercard",
-      cvv: "111",
+      // coin_amount: 10,
+      // usd_amount: 0,
+      // wallet_address: "0x7AB38a5eEc793f8CdC770f365d573678005ad07B",
+      // cardholder_name: "John Williams",
+      // card_number: "5146312620000045",
+      // card_expiration: "09/25",
+      // card_type: "mastercard",
+      // cvv: "111",
     },
   });
   const [paymentErrors, setPaymentErrors] = useState([]);
@@ -109,6 +110,8 @@ const CheckoutForm = () => {
         throw new Error("card_expiration is not in the correct format.");
       }
 
+      setLoading(true);
+
       try {
         const { tokenId } = await getApexTokenId({
           card_number: data.card_number,
@@ -122,7 +125,6 @@ const CheckoutForm = () => {
           token_id: tokenId,
           type: data.card_type,
         });
-        console.log({ payment });
 
         const { payment_status, payment_transaction_id } = payment;
 
@@ -141,10 +143,14 @@ const CheckoutForm = () => {
           };
 
           let response = await Transaction.transfer(body);
-          console.log({ response });
+
+          if (response.data) {
+            toast.success(response.data.message);
+            reset();
+            setLoading(false);
+          }
         }
       } catch (error) {
-        console.log({ error });
         let newErrors = [];
         if (error?.response?.data?.errors) {
           Object.keys(error.response.data.errors).forEach((key) => {
@@ -159,6 +165,7 @@ const CheckoutForm = () => {
           toast.error("Internal error");
         }
         setPaymentErrors(newErrors);
+        setLoading(false);
       }
     },
     [currentPriceHewe, currentPriceAmc, coinSymbol]
@@ -266,7 +273,7 @@ const CheckoutForm = () => {
                         id="wallet_address"
                         className="block w-full rounded-md  p-2.5 pe-10 text-sm bg-gray-900 text-white outline-none"
                         placeholder="0x..."
-                        {...register("wallet_address", { required: true })}
+                        {...register("wallet_address", { required: "Wallet address is required" })}
                       />
                       {errors.wallet_address && (
                         <span className="text-sm text-red-500">
@@ -283,7 +290,7 @@ const CheckoutForm = () => {
                       </label>
                       <select
                         id="card_type"
-                        {...register("card_type", { required: true })}
+                        {...register("card_type", { required: "Card type is required" })}
                         placeholder="Choose card type"
                         className="border text-sm rounded-md  block w-full p-2.5 bg-gray-900 placeholder-gray-400 text-white border-none"
                       >
@@ -307,7 +314,9 @@ const CheckoutForm = () => {
                         id="cardholder_name"
                         className="block text-white w-full rounded-md p-2.5 text-sm bg-gray-900"
                         placeholder="Cardholder name"
-                        {...register("cardholder_name", { required: true })}
+                        {...register("cardholder_name", {
+                          required: "Cardholder name is required",
+                        })}
                       />
                       {errors.cardholder_name && (
                         <span className="text-sm text-red-500">
@@ -328,7 +337,7 @@ const CheckoutForm = () => {
                         id="card_number"
                         className="block text-white w-full rounded-md p-2.5 text-sm bg-gray-900"
                         placeholder="Card number"
-                        {...register("card_number", { required: true, length: 16 })}
+                        {...register("card_number", { required: "Card number is required" })}
                       />
                       {errors.card_number && (
                         <span className="text-sm text-red-500">{errors.card_number.message}</span>
@@ -362,7 +371,15 @@ const CheckoutForm = () => {
                         </div>
                         <input
                           id="card-expiration-input"
-                          {...register("card_expiration", { required: true })}
+                          {...register("card_expiration", {
+                            required: "Card expiration is required",
+                            validate: (value) => {
+                              const pattern = /^(0[1-9]|1[0-2])\/\d{2}$/;
+                              return (
+                                pattern.test(value) || "Invalid format. Use MM/YY (e.g., 09/25)."
+                              );
+                            },
+                          })}
                           type="text"
                           className="block text-white w-full rounded-md bg-gray-900 p-2.5 ps-9 text-sm"
                           placeholder="12/25"
@@ -414,7 +431,7 @@ const CheckoutForm = () => {
                         aria-describedby="helper-text-explanation"
                         className="block text-white w-full rounded-md p-2.5 text-sm bg-gray-900"
                         placeholder="•••"
-                        {...register("cvv", { required: true })}
+                        {...register("cvv", { required: "Cvv is required" })}
                       />
                       {errors.cvv && (
                         <span className="text-sm text-red-500">{errors.cvv.message}</span>
@@ -436,9 +453,29 @@ const CheckoutForm = () => {
 
                   <button
                     type="submit"
+                    disabled={loading}
                     className="flex w-full items-center justify-center rounded-lg bg-primary-950 px-5 py-2.5 text-sm font-semibold text-white hover:opacity-80 focus:outline-none focus:ring-4"
                   >
-                    Pay now
+                    {loading ? (
+                      <svg
+                        aria-hidden="true"
+                        class="w-6 h-6 text-gray-200 animate-spin  fill-gray-400"
+                        viewBox="0 0 100 101"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                          fill="currentColor"
+                        />
+                        <path
+                          d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                          fill="currentFill"
+                        />
+                      </svg>
+                    ) : (
+                      "Pay now"
+                    )}
                   </button>
                   <div className="flex items-center justify-center gap-8 mt-6">
                     <img

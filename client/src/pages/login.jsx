@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
-import Auth from "@/api/Auth";
+import Auth from "@/api/auth";
 import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { useDispatch } from "react-redux";
