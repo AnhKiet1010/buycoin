@@ -18,6 +18,9 @@ app.get("/", (req, res) => {
   res.send("Server is OK");
 });
 
+const authRouter = require("./routes/auth.route");
+app.use("/api/v1/auth", authRouter);
+
 const transactionRouter = require("./routes/transaction.route");
 app.use("/api/v1/transaction", transactionRouter);
 

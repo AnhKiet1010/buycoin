@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import SlipRate from "@/api/SlipRate";
+import SlipRate from "@/api/slipRate";
 import { getPriceHewe } from "@/api/hewe";
 import { getPriceAmc } from "@/api/amc";
 import { formatPrice } from "@/utils";
 import { getApexTokenId, purchase } from "@/api/payment";
 import { ToastContainer, toast } from "react-toastify";
-import transactionModel from "@/api/Transaction";
+import Transaction from "@/api/transaction";
 
 const CheckoutForm = () => {
   const [loading, setLoading] = useState(false);
@@ -140,7 +140,7 @@ const CheckoutForm = () => {
             wallet_address: data.wallet_address,
           };
 
-          let response = await transactionModel.transfer(body);
+          let response = await Transaction.transfer(body);
           console.log({ response });
         }
       } catch (error) {
@@ -168,7 +168,7 @@ const CheckoutForm = () => {
     <>
       <ToastContainer />
       <div className="flex items-center justify-center w-screen h-screen px-0 pb-0 overflow-hidden bg-top bg-no-repeat bg-cover lg:justify-start ms:px-32 lg:px-64 bg-main">
-        <section className="p-2 antialiased bg-gray-600 rounded-lg md:p-8">
+        <section className="p-2 antialiased bg-gray-600 border rounded-lg border-primary-950 md:p-8">
           <div className="px-4 mx-auto lg:max-w-screen-xl 2xl:px-0">
             <div className="py-4 mx-auto lg:max-w-5xl">
               <h2 className="text-xl font-semibold text-center text-gray-900 uppercase dark:text-white sm:text-4xl">

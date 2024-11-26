@@ -74,3 +74,31 @@ exports.createTransaction = async (req, res) => {
 //   const response = await sendToken();
 //   console.log({ response });
 // };
+
+exports.getList = async (req, res) => {
+  try {
+    const { page = 1, perPage = 10 } = req.query;
+
+    const pageNumber = parseInt(page, 10);
+    const perPageNumber = parseInt(perPage, 10);
+
+    const skip = (pageNumber - 1) * perPageNumber;
+
+    const list = await Transaction.find({}).skip(skip).limit(perPageNumber);
+
+    const total = await Transaction.countDocuments();
+
+    res.json({
+      data: list,
+      pagination: {
+        currentPage: pageNumber,
+        perPage: perPageNumber,
+        total,
+        totalPages: Math.ceil(total / perPageNumber),
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching transaction list:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
