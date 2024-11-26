@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Transaction from "@/api/Transaction";
+import Transaction from "@/api/transaction";
 import { shortenWalletAddress } from "../utils";
 import Pagination from "../components/Pagination";
 import { useDispatch } from "react-redux";
