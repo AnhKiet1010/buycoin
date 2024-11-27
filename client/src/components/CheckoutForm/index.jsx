@@ -22,14 +22,14 @@ const CheckoutForm = () => {
   } = useForm({
     defaultValues: {
       coin_symbol: "HEWE",
-      coin_amount: 10,
-      usd_amount: 0,
-      wallet_address: "0x7AB38a5eEc793f8CdC770f365d573678005ad07B",
-      cardholder_name: "John Williams",
-      card_number: "5146312620000045",
-      card_expiration: "09/25",
-      card_type: "mastercard",
-      cvv: "111",
+      // coin_amount: 10,
+      // usd_amount: 0,
+      // wallet_address: "0x7AB38a5eEc793f8CdC770f365d573678005ad07B",
+      // cardholder_name: "John Williams",
+      // card_number: "5146312620000045",
+      // card_expiration: "09/25",
+      // card_type: "mastercard",
+      // cvv: "111",
     },
   });
   const [paymentErrors, setPaymentErrors] = useState([]);
@@ -84,52 +84,36 @@ const CheckoutForm = () => {
 
   const onSubmit = useCallback(
     async (data) => {
-      const exp_month = data.card_expiration.split("/")[0];
-      const exp_year = data.card_expiration.split("/")[1];
+      const expiry_month = data.card_expiration.split("/")[0];
+      const expiry_year = data.card_expiration.split("/")[1];
 
-      if (!exp_month || !exp_year) {
+      if (!expiry_month || !expiry_year) {
         throw new Error("card_expiration is not in the correct format.");
       }
 
       setLoading(true);
 
       try {
-        const { tokenId } = await getApexTokenId({
-          card_number: data.card_number,
-          expiry_month: exp_month,
-          expiry_year: exp_year,
-        });
-
-        const payment = await purchase({
-          amount: parseInt(data.total_amount * 100),
+        const body = {
           cardholder_name: data.cardholder_name,
-          token_id: tokenId,
-          type: data.card_type,
-        });
+          card_number: data.card_number,
+          card_type: data.card_type,
+          coin_symbol: data.coin_symbol,
+          coin_amount: data.coin_amount,
+          total_amount: data.total_amount,
+          base_price: coinSymbol === "HEWE" ? currentPriceHewe : currentPriceAmc,
+          slip_rate: getSlipRateByAmount(data.coin_amount),
+          wallet_address: data.wallet_address,
+          expiry_month,
+          expiry_year,
+        };
 
-        const { payment_status, payment_transaction_id } = payment;
+        let response = await Transaction.transfer(body);
 
-        if (payment_status === "Approved") {
-          const body = {
-            cardholder_name: data.cardholder_name,
-            card_number: data.card_number,
-            card_type: data.card_type,
-            coin_symbol: data.coin_symbol,
-            coin_amount: data.coin_amount,
-            total_amount: data.total_amount * 100,
-            base_price: coinSymbol === "HEWE" ? currentPriceHewe : currentPriceAmc,
-            slip_rate: getSlipRateByAmount(data.coin_amount),
-            payment_transaction_id,
-            wallet_address: data.wallet_address,
-          };
-
-          let response = await Transaction.transfer(body);
-
-          if (response.data) {
-            toast.success(response.data.message);
-            reset();
-            setLoading(false);
-          }
+        if (response.data) {
+          toast.success(response.data.message);
+          reset();
+          setLoading(false);
         }
       } catch (error) {
         let newErrors = [];
