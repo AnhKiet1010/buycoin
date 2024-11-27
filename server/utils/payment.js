@@ -1,8 +1,8 @@
-import axios from "axios";
+const axios = require("axios");
 
-export const getApexTokenId = async ({ card_number, expiry_month, expiry_year }) => {
+exports.getApexTokenId = async ({ card_number, expiry_month, expiry_year }) => {
   const response = await axios.post(
-    "/payment-card",
+    "https://apexapi.sandbox.go-afs.com/tokens/v1/cards",
     {
       cardNumber: card_number,
       expiryMonth: expiry_month,
@@ -11,7 +11,7 @@ export const getApexTokenId = async ({ card_number, expiry_month, expiry_year })
     {
       headers: {
         "Content-Type": "application/json",
-        apiKey: import.meta.env.VITE_APEX_API_KEY,
+        apiKey: process.env.VITE_APEX_API_KEY,
       },
     }
   );
@@ -20,9 +20,9 @@ export const getApexTokenId = async ({ card_number, expiry_month, expiry_year })
   }
 };
 
-export const purchase = async ({ amount, type, cardholder_name, token_id }) => {
+exports.purchase = async ({ amount, type, cardholder_name, token_id }) => {
   const response = await axios.post(
-    "/payment-purchase",
+    "https://apexapi.sandbox.go-afs.com/v1/transactions/Purchase?api-version=1.0",
     {
       amount,
       currency: "USD",
@@ -38,7 +38,7 @@ export const purchase = async ({ amount, type, cardholder_name, token_id }) => {
     {
       headers: {
         "Content-Type": "application/json",
-        apiKey: import.meta.env.VITE_APEX_API_KEY,
+        apiKey: process.env.VITE_APEX_API_KEY,
       },
     }
   );

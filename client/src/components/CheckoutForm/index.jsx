@@ -22,14 +22,14 @@ const CheckoutForm = () => {
   } = useForm({
     defaultValues: {
       coin_symbol: "HEWE",
-      // coin_amount: 10,
-      // usd_amount: 0,
-      // wallet_address: "0x7AB38a5eEc793f8CdC770f365d573678005ad07B",
-      // cardholder_name: "John Williams",
-      // card_number: "5146312620000045",
-      // card_expiration: "09/25",
-      // card_type: "mastercard",
-      // cvv: "111",
+      coin_amount: 10,
+      usd_amount: 0,
+      wallet_address: "0x7AB38a5eEc793f8CdC770f365d573678005ad07B",
+      cardholder_name: "John Williams",
+      card_number: "5146312620000045",
+      card_expiration: "09/25",
+      card_type: "mastercard",
+      cvv: "111",
     },
   });
   const [paymentErrors, setPaymentErrors] = useState([]);
@@ -440,7 +440,7 @@ const CheckoutForm = () => {
                     {loading ? (
                       <svg
                         aria-hidden="true"
-                        class="w-6 h-6 text-gray-200 animate-spin  fill-gray-400"
+                        className="w-6 h-6 text-gray-200 animate-spin fill-gray-400"
                         viewBox="0 0 100 101"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
