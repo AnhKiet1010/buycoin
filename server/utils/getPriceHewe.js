@@ -1,5 +1,5 @@
-import axios from "axios";
+const axios = require("axios");
 
-export const getPriceHewe = async () => {
+exports.getPriceHewe = async () => {
   return axios.get("https://api.lbkex.com/v1/ticker.do?symbol=hewe_usdt");
 };

@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import SlipRate from "@/api/slipRate";
-import { getPriceHewe } from "@/api/hewe";
-import { getPriceAmc } from "@/api/amc";
 import { formatPrice } from "@/utils";
 import { getApexTokenId, purchase } from "@/api/payment";
 import { ToastContainer, toast } from "react-toastify";
@@ -10,6 +8,7 @@ import Transaction from "@/api/transaction";
 
 const CheckoutForm = () => {
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
   const [currentPriceHewe, setCurrentPriceHewe] = useState(0);
   const [currentPriceAmc, setCurrentPriceAmc] = useState(0);
   const [currentSlipRate, setCurrentSlipRate] = useState([]);
@@ -39,28 +38,6 @@ const CheckoutForm = () => {
   const coinSymbol = useWatch({ control, name: "coin_symbol" });
 
   useEffect(() => {
-    const fetchPriceHewe = async () => {
-      try {
-        let response = await getPriceHewe();
-        setCurrentPriceHewe(response.data.ticker.latest * 100);
-      } catch (error) {
-        console.error("Error fetching HEWE price:", error);
-      }
-    };
-
-    const fetchPriceAmc = async () => {
-      try {
-        let response = await getPriceAmc();
-        if (response.data.result.length >= 1) {
-          setCurrentPriceAmc(response.data.result[0].p);
-        } else {
-          throw new Error("Error fetching AMC price");
-        }
-      } catch (error) {
-        console.error("Error fetching AMC price:", error);
-      }
-    };
-
     const fetchSlipRate = async () => {
       try {
         let response = await SlipRate.getSlipRates();
@@ -68,15 +45,19 @@ const CheckoutForm = () => {
         if (status !== 200) {
         } else {
           setCurrentSlipRate(data.slipRates);
+          setCurrentPriceAmc(data.amcPrice);
+          setCurrentPriceHewe(data.hewePrice);
+          setFetching(false);
         }
       } catch (error) {
+        toast.error("Internal error");
         console.error("Error fetching Slip Rate:", error);
       }
     };
 
-    Promise.all([fetchPriceHewe(), fetchPriceAmc(), fetchSlipRate()])
+    Promise.all([fetchSlipRate()])
       .then(() => setLoading(false))
-      .catch(() => setLoading(false));
+      .catch(() => setLoading(true));
   }, []);
 
   const getSlipRateByAmount = useCallback(
@@ -157,7 +138,6 @@ const CheckoutForm = () => {
             newErrors.push(error.response.data.errors[key][0]);
           });
         } else if (error.response.data.Error?.messages) {
-          console.log({ messages: error.response.data.Error.messages });
           error.response.data.Error.messages.forEach((message) => {
             newErrors.push(message.description);
           });
@@ -190,6 +170,7 @@ const CheckoutForm = () => {
                           <p className="mb-2 text-sm text-gray-300">Swap from</p>
                           <input
                             placeholder="1000"
+                            readOnly={fetching}
                             type="number"
                             {...register("coin_amount", {
                               required: "Coin amount is required",
@@ -453,7 +434,7 @@ const CheckoutForm = () => {
 
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || fetching}
                     className="flex w-full items-center justify-center rounded-lg bg-primary-950 px-5 py-2.5 text-sm font-semibold text-white hover:opacity-80 focus:outline-none focus:ring-4"
                   >
                     {loading ? (

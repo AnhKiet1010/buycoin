@@ -1,4 +1,6 @@
 const SlipRate = require("../models/slipRate.model");
+const { getPriceAmc } = require("../utils/getPriceAmc");
+const { getPriceHewe } = require("../utils/getPriceHewe");
 
 exports.createInitialSlipRate = async () => {
   const initialConfigs = [
@@ -12,16 +14,17 @@ exports.createInitialSlipRate = async () => {
 };
 
 exports.getSlipRates = async (req, res) => {
-  // const slipRate = await SlipRate.findOne({
-  //   minCoins: { $lte: coinAmount },
-  //   $or: [{ maxCoins: { $gte: coinAmount } }, { maxCoins: null }],
-  // });
   const slipRates = await SlipRate.find();
+
+  let responseHewe = await getPriceHewe();
+  let responseAmc = await getPriceAmc();
 
   res.json({
     status: 200,
     data: {
       slipRates,
+      hewePrice: responseHewe.data.ticker.latest * 100,
+      amcPrice: responseAmc.data.result[0].p,
     },
     errors: [],
     message: "",

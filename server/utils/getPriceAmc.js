@@ -1,5 +1,5 @@
-import axios from "axios";
+const axios = require("axios");
 
-export const getPriceAmc = async () => {
+exports.getPriceAmc = async () => {
   return axios.get("https://sapi.xt.com/v4/public/ticker/price?symbol=amc_usdt");
 };
