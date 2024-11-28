@@ -536,26 +536,6 @@ const CheckoutForm = () => {
                   </div>
                 </div>
               </form>
-
-              <p className="mt-6 text-sm text-center text-gray-200 sm:mt-8 lg:text-left">
-                Payment processed by{" "}
-                <a
-                  href="#"
-                  title=""
-                  className="font-medium underline text-primary-700 hover:no-underline dark:text-primary-500"
-                >
-                  Paddle
-                </a>{" "}
-                for{" "}
-                <a
-                  href="#"
-                  title=""
-                  className="font-medium underline text-primary-700 hover:no-underline dark:text-primary-500"
-                >
-                  Flowbite LLC
-                </a>
-                - United States Of America
-              </p>
             </div>
           </div>
         </section>
