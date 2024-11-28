@@ -1,4 +1,6 @@
 const axios = require("axios");
+const querystring = require("querystring");
+const https = require("https");
 
 exports.getApexTokenId = async ({ card_number, expiry_month, expiry_year }) => {
   const response = await axios.post(
@@ -11,7 +13,7 @@ exports.getApexTokenId = async ({ card_number, expiry_month, expiry_year }) => {
     {
       headers: {
         "Content-Type": "application/json",
-        apiKey: process.env.VITE_APEX_API_KEY,
+        apiKey: process.env.APEX_API_KEY,
       },
     }
   );
@@ -38,9 +40,107 @@ exports.purchase = async ({ amount, type, cardholder_name, token_id }) => {
     {
       headers: {
         "Content-Type": "application/json",
-        apiKey: process.env.VITE_APEX_API_KEY,
+        apiKey: process.env.APEX_API_KEY,
       },
     }
   );
   return response.data;
+};
+
+// Validate keys in the provided information
+const validateKeys = (info, validKeys, type) => {
+  for (let key in info) {
+    if (!validKeys.includes(key)) {
+      throw new Error(`Invalid key provided in ${type}. '${key}' is not valid.`);
+    }
+  }
+};
+
+// Perform API request
+const doRequest = (securityKey, requestData) => {
+  const hostName = "payments.go-afs.com";
+  const path = "/api/transact.php";
+
+  // Attach security key to request data
+  const postData = querystring.stringify({ ...requestData, security_key: securityKey });
+
+  const options = {
+    hostname: hostName,
+    path: path,
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Content-Length": Buffer.byteLength(postData),
+    },
+  };
+
+  return new Promise((resolve, reject) => {
+    const req = https.request(options, (response) => {
+      let data = "";
+
+      // Collect response data
+      response.on("data", (chunk) => {
+        data += chunk;
+      });
+
+      // Resolve promise when response ends
+      response.on("end", () => {
+        resolve({
+          statusCode: response.statusCode,
+          headers: response.headers,
+          body: data,
+        });
+      });
+    });
+
+    // Reject promise if an error occurs
+    req.on("error", (err) => reject(err));
+
+    req.write(postData); // Write request body
+    req.end();
+  });
+};
+
+// Function to perform a sale transaction
+exports.performSale = async (securityKey, billingInfo, shippingInfo, saleDetails) => {
+  // Validate billing and shipping information
+  const validBillingKeys = [
+    "first_name",
+    "last_name",
+    "company",
+    "address1",
+    "address2",
+    "city",
+    "state",
+    "zip",
+    "country",
+    "phone",
+    "fax",
+    "email",
+  ];
+  const validShippingKeys = [
+    "shipping_first_name",
+    "shipping_last_name",
+    "shipping_company",
+    "shipping_address1",
+    "address2",
+    "shipping_city",
+    "shipping_state",
+    "shipping_zip",
+    "shipping_country",
+    "shipping_email",
+  ];
+
+  validateKeys(billingInfo, validBillingKeys, "billing information");
+  validateKeys(shippingInfo, validShippingKeys, "shipping information");
+
+  // Combine all data
+  const requestData = {
+    ...saleDetails, // Includes: type, amount, ccnumber, ccexp, cvv
+    ...billingInfo,
+    ...shippingInfo,
+  };
+
+  // Perform API request
+  return await doRequest(securityKey, requestData);
 };

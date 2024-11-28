@@ -22,14 +22,6 @@ const CheckoutForm = () => {
   } = useForm({
     defaultValues: {
       coin_symbol: "HEWE",
-      // coin_amount: 10,
-      // usd_amount: 0,
-      // wallet_address: "0x7AB38a5eEc793f8CdC770f365d573678005ad07B",
-      // cardholder_name: "John Williams",
-      // card_number: "5146312620000045",
-      // card_expiration: "09/25",
-      // card_type: "mastercard",
-      // cvv: "111",
     },
   });
   const [paymentErrors, setPaymentErrors] = useState([]);
@@ -50,8 +42,8 @@ const CheckoutForm = () => {
           setFetching(false);
         }
       } catch (error) {
-        toast.error("Internal error");
         console.error("Error fetching Slip Rate:", error);
+        toast.error("Internal error");
       }
     };
 
@@ -104,6 +96,11 @@ const CheckoutForm = () => {
           base_price: coinSymbol === "HEWE" ? currentPriceHewe : currentPriceAmc,
           slip_rate: getSlipRateByAmount(data.coin_amount),
           wallet_address: data.wallet_address,
+          city: data.city,
+          address: data.address,
+          state: data.state,
+          zip: data.zip,
+          cvv: data.cvv,
           expiry_month,
           expiry_year,
         };
@@ -116,19 +113,19 @@ const CheckoutForm = () => {
           setLoading(false);
         }
       } catch (error) {
-        let newErrors = [];
-        if (error?.response?.data?.errors) {
-          Object.keys(error.response.data.errors).forEach((key) => {
-            newErrors.push(error.response.data.errors[key][0]);
-          });
-        } else if (error.response.data.Error?.messages) {
-          error.response.data.Error.messages.forEach((message) => {
-            newErrors.push(message.description);
-          });
-        } else {
-          toast.error("Internal error");
-        }
-        setPaymentErrors(newErrors);
+        // let newErrors = [];
+        // if (error?.response?.data?.errors) {
+        //   Object.keys(error.response.data.errors).forEach((key) => {
+        //     newErrors.push(error.response.data.errors[key][0]);
+        //   });
+        // } else if (error.response.data.Error?.messages) {
+        //   error.response.data.Error.messages.forEach((message) => {
+        //     newErrors.push(message.description);
+        //   });
+        // } else {
+        toast.error(error.response.data.message);
+        // }
+        // setPaymentErrors(newErrors);
         setLoading(false);
       }
     },
@@ -308,7 +305,6 @@ const CheckoutForm = () => {
                         <span className="text-sm text-red-500">{errors.card_number.message}</span>
                       )}
                     </div>
-
                     <div>
                       <label
                         htmlFor="card-expiration-input"
@@ -400,6 +396,80 @@ const CheckoutForm = () => {
                       />
                       {errors.cvv && (
                         <span className="text-sm text-red-500">{errors.cvv.message}</span>
+                      )}
+                    </div>
+                    <div className="col-span-2 sm:col-span-1">
+                      <label
+                        htmlFor="city"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        City <span className="text-red-600">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="city"
+                        className="block text-white w-full rounded-md p-2.5 text-sm bg-gray-900"
+                        placeholder="New York"
+                        {...register("city", { required: "City is required" })}
+                      />
+                      {errors.city && (
+                        <span className="text-sm text-red-500">{errors.city.message}</span>
+                      )}
+                    </div>
+
+                    <div className="col-span-2 sm:col-span-1">
+                      <label
+                        htmlFor="state"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        State <span className="text-red-600">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="state"
+                        className="block text-white w-full rounded-md p-2.5 text-sm bg-gray-900"
+                        placeholder="NY"
+                        {...register("state", { required: "State is required" })}
+                      />
+                      {errors.state && (
+                        <span className="text-sm text-red-500">{errors.state.message}</span>
+                      )}
+                    </div>
+
+                    <div className="col-span-2 sm:col-span-1">
+                      <label
+                        htmlFor="address"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        Address <span className="text-red-600">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="state"
+                        className="block text-white w-full rounded-md p-2.5 text-sm bg-gray-900"
+                        placeholder="123 Elm St"
+                        {...register("address", { required: "Address is required" })}
+                      />
+                      {errors.address && (
+                        <span className="text-sm text-red-500">{errors.address.message}</span>
+                      )}
+                    </div>
+                    <div className="col-span-2 sm:col-span-1">
+                      <label
+                        htmlFor="zip"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        Zip <span className="text-red-600">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="state"
+                        className="block text-white w-full rounded-md p-2.5 text-sm bg-gray-900"
+                        placeholder="10001"
+                        {...register("zip", { required: "Zip is required" })}
+                      />
+                      {errors.zip && (
+                        <span className="text-sm text-red-500">{errors.zip.message}</span>
                       )}
                     </div>
                   </div>

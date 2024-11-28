@@ -9,40 +9,5 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    <script
-      type="text/javascript"
-      src="https://apexgateway.blob.core.windows.net/apexjs/sandbox/apex.js"
-    ></script>
-    <script>
-      var apexjs = ApexJS("c377537fc3e54eff8284468f34e5fdd683791460dc22412ebeee607efa812197");
-      let styles = {
-        base: "width:100%; height:20px; background-color: transparent; border: none; display: block; margin: 0; padding: 0; color: #32325D; font-family: 'Montserrat', sans-serif; font-size: 16px; -webkit-font-smoothing: antialiased;",
-        focus: "outline: none;",
-        invalid: "color: #E25950;",
-        placeholder: "color: #CFD7DF;",
-      };
-
-      var card = apexjs.cardElements({
-        cardNumber: {
-          containerId: "card-number",
-          title: "Card Number",
-          placeholder: "1234 1234 1234 1234",
-          styles: styles,
-        },
-        cardExpiry: {
-          containerId: "card-expiry",
-          title: "Expiry",
-          placeholder: "MM / YY",
-          styles: styles,
-        },
-        cardCvv: {
-          containerId: "card-cvc",
-          placeholder: "CVC",
-          title: "CVC",
-          styles: styles,
-          masked: true, // display as password (only supported in CVV field)
-        },
-      });
-    </script>
   </body>
 </html>
