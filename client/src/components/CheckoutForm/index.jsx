@@ -53,19 +53,21 @@ const CheckoutForm = () => {
 
   const getSlipRateByAmount = useCallback(
     (coinAmount, coinSymbol) => {
-      const slip = currentSlipRate.find(
-        (rate) =>
-          rate.coin_symbol === coinSymbol &&
-          coinAmount >= rate.minCoins &&
-          (coinAmount <= rate.maxCoins || rate.maxCoins === null)
-      );
-      return slip ? slip.slipRate : 0.1;
+      // const slip = currentSlipRate.find(
+      //   (rate) =>
+      //     rate.coin_symbol === coinSymbol &&
+      //     coinAmount >= rate.minCoins &&
+      //     (coinAmount <= rate.maxCoins || rate.maxCoins === null)
+      // );
+      // return slip ? slip.slipRate : 0.001;
+      return (coinAmount / 1000) * 0.001;
     },
     [currentSlipRate]
   );
 
   useEffect(() => {
     const slipRate = getSlipRateByAmount(coinAmount, coinSymbol);
+    console.log({ slipRate });
     if (coinSymbol === "HEWE") {
       setValue("usd_amount", formatPrice(currentPriceHewe * coinAmount));
       setValue("total_amount", formatPrice(currentPriceHewe * (1 + slipRate) * coinAmount));
