@@ -14,6 +14,11 @@ const slipRateSchema = new Schema({
     type: Number,
     required: true,
   },
+  coin_symbol: {
+    type: String,
+    enum: ["HEWE", "AMC"],
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("SlipRate", slipRateSchema);

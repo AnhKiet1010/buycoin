@@ -8,26 +8,6 @@
   font-family: "Space Grotesk", sans-serif;
 }
 
-.footer-btn {
-  align-items: center;
-  background: linear-gradient(0deg, #dcc057 -17.31%, #f4e096 49.67%, #d5b643 106.73%);
-  border: 0.94px solid #dcc057;
-  border-radius: 100px;
-  color: #02071b;
-  display: flex;
-  flex-shrink: 0;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 500;
-  gap: 9.4px;
-  height: 52px;
-  justify-content: center;
-  line-height: normal;
-  padding: 6.58px 14.1px;
-  text-align: center;
-  width: 162px;
-}
-
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -42,4 +22,25 @@ input[type="number"] {
 
 .w-inherit {
   width: inherit;
+}
+
+.custom-input {
+  background: linear-gradient(#f4e096, #51525133, #f4e096);
+  border-radius: 10px;
+  box-shadow: inset -2px 2px 10.9px 0 #00000029;
+  flex-shrink: 0;
+  height: 50px;
+  margin-top: 10px;
+  padding: 1.5px;
+  position: relative;
+}
+
+.custom-input input,
+.custom-input select,
+.custom-input div input {
+  background: #282c3c;
+  border-radius: 8px;
+  height: 100%;
+  padding: 0 10px;
+  width: 100%;
 }

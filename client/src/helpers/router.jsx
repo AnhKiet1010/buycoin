@@ -1,37 +1,19 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { Redirect, Route } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
-export const PrivateRoute = ({ component: Component, ...rest }) => {
+export const PrivateRoute = ({ children }) => {
   const { accessToken } = useSelector((state) => state.auth);
-  return (
-    <Route
-      {...rest}
-      render={(props) => {
-        if (accessToken) {
-          return <Component {...props} />;
-        } else {
-          return <Redirect to={{ pathname: "/" }} />;
-        }
-      }}
-    />
-  );
+
+  return accessToken ? <Outlet /> : <Navigate to="/" />;
 };
 
-export const PublicRoute = ({ component: Component, ...rest }) => {
+export const PublicRoute = ({ children }) => {
   const { accessToken, user } = useSelector((state) => state.auth);
-  return (
-    <Route
-      {...rest}
-      render={(props) => {
-        if (accessToken) {
-          if (user) {
-            <Redirect to={{ pathname: "/dashboard" }} />;
-          }
-        } else {
-          return <Component {...props} />;
-        }
-      }}
-    />
-  );
+
+  if (accessToken && user) {
+    return <Navigate to="/dashboard" />;
+  }
+
+  return <Outlet />;
 };
