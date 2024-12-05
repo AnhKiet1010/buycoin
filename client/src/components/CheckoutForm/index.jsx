@@ -127,9 +127,9 @@ const CheckoutForm = () => {
     <>
       <ToastContainer />
       <div
-        className={`flex justify-center w-screen h-screen overflow-y-auto overflow-x-hidden bg-center bg-no-repeat bg-cover ${
-          success ? "bg-[url('bg2.png')]" : "bg-[url('/bg1.svg')]"
-        }`}
+        className={`flex justify-center w-screen h-screen overflow-y-auto overflow-x-hidden bg-center bg-no-repeat bg-cover
+          bg-[url('/bg1.svg')]
+        `}
       >
         <section className="w-full px-10 py-16 antialiased xl:px-0 xl:pt-20 max-w-180">
           <div className="flex flex-col items-center">
