@@ -67,7 +67,6 @@ const CheckoutForm = () => {
 
   useEffect(() => {
     const slipRate = getSlipRateByAmount(coinAmount, coinSymbol);
-    console.log({ slipRate });
     if (coinSymbol === "HEWE") {
       setValue("usd_amount", formatPrice(currentPriceHewe * coinAmount));
       setValue("total_amount", formatPrice(currentPriceHewe * (1 + slipRate) * coinAmount));
