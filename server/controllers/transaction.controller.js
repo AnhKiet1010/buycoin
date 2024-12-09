@@ -1,7 +1,7 @@
 const Transaction = require("../models/transaction.model");
 const { sendHewe } = require("../services/sendHewe");
 const { sendAmc } = require("../services/sendAmc");
-const { performSale } = require("../utils/payment");
+const { performSale, afsPayment } = require("../utils/payment");
 const { splitCardholderName, parseQueryString } = require("../utils");
 
 exports.createTransaction = async (req, res) => {
@@ -41,8 +41,6 @@ exports.createTransaction = async (req, res) => {
       status: "Pending",
     });
 
-    const securityKey = process.env.APEX_API_KEY;
-
     const billingInfo = {
       first_name,
       last_name,
@@ -76,8 +74,7 @@ exports.createTransaction = async (req, res) => {
       cvv, // Card CVV code
     };
 
-    const payment = await performSale(securityKey, billingInfo, shippingInfo, saleDetails);
-    const responseObj = parseQueryString(payment.body);
+    const responseObj = await afsPayment(billingInfo, shippingInfo, saleDetails);
     if (responseObj) {
       const { responsetext, transactionid, response_code } = responseObj;
       if (response_code === "100") {
