@@ -22,18 +22,6 @@ const CheckoutForm = () => {
   } = useForm({
     defaultValues: {
       coin_symbol: "HEWE",
-      coin_amount: 10,
-      usd_amount: 0,
-      wallet_address: "0x7AB38a5eEc793f8CdC770f365d573678005ad07B",
-      cardholder_name: "John Doe",
-      card_number: "4111111111111111",
-      card_expiration: "12/25",
-      card_type: "visa",
-      cvv: "123",
-      city: "New York",
-      state: "NY",
-      zip: "10001",
-      address: "123 Elm St",
     },
   });
 
